@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:padding="16dp"
+    android:layout_margin="5dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    >
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:layout_marginRight="20sp"
+        android:layout_marginTop="6dp"
+        android:id="@+id/checkbox_selected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/checkbox_selected"
+        android:layout_toLeftOf="@+id/item_pic"
+        tools:text="salallalla" />
+
+    <TextView
+        android:id="@+id/item_desc"
+        android:layout_marginTop="10dp"
+        android:layout_toLeftOf="@+id/item_pic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/item_title"
+        android:layout_toRightOf="@id/checkbox_selected"
+        tools:text="kjkdjlsjd" />
+
+    <ImageView
+        android:layout_marginLeft="10dp"
+        android:id="@+id/item_pic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        />
+
+
+</RelativeLayout>
