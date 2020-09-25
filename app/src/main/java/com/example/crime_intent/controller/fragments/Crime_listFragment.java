@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,12 +38,14 @@ import java.util.UUID;
  */
 public class Crime_listFragment extends Fragment {
 
+    public static final String BUNDLE_ARG_SUB_TITLE_VISIBLE = "sub title visible";
     private Button mButton_add;
     private RecyclerView mRecyclerView;
     private CrimeRepository mCrimeRepository;
     private List<UUID> deleteitems;
     private CrimeAdapter mAdapter;
     private FrameLayout mFrameLayout;
+    private boolean IsSubTitleVisible = false;
 
     public Crime_listFragment() {
         // Required empty public constructor
@@ -64,18 +67,41 @@ public class Crime_listFragment extends Fragment {
         deleteitems=new ArrayList<>();
         setHasOptionsMenu(true);
 
+        if (savedInstanceState != null) {
+            setMenuItemSubTitle(savedInstanceState);
+        }
+
+    }
+
+    private void setMenuItemSubTitle(Bundle savedInstanceState) {
+        IsSubTitleVisible = savedInstanceState.getBoolean(BUNDLE_ARG_SUB_TITLE_VISIBLE,false);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        updateSubTitle();
         updateView();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(BUNDLE_ARG_SUB_TITLE_VISIBLE,IsSubTitleVisible);
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.remove_crime_menu,menu);
-        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_crime_list,menu);
+        MenuItem item = menu.findItem(R.id.menu_item_subtitle);
+        setItemSubTitle(item);
+
+
+    }
+
+    private void setItemSubTitle(MenuItem item) {
+        item.setTitle(IsSubTitleVisible ? R.string.hide_subtitle : R.string.show_subtitle);
     }
 
     @Override
@@ -85,12 +111,30 @@ public class Crime_listFragment extends Fragment {
                 for (int i = 0; i <deleteitems.size() ; i++) {
                     CrimeRepository.getInstance().delete(deleteitems.get(i));
                 }
-                updateView();
-
-
                 return true;
+                //updateView();
+            case R.id.menu_item_subtitle:
+                IsSubTitleVisible =! IsSubTitleVisible;
+                updateSubTitle();
+                setItemSubTitle(item);
+                return true;
+
+            case R.id.menu_item_add_crime:
+                Crime crime = new Crime();
+                CrimeRepository.getInstance().insert(crime);
+                Intent intent = Detail_view_pagerActivity.newIntent(getActivity(),crime.getUUID());
+                startActivity(intent);
+                return true;
+
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateSubTitle() {
+        int numberOfCrimes = CrimeRepository.getInstance().getCrimes().size();
+        String crimeText = IsSubTitleVisible ? numberOfCrimes + "crimes" : null ;
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.getSupportActionBar().setSubtitle(crimeText);
     }
 
     @Override

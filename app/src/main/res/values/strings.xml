@@ -2,4 +2,8 @@
     <string name="app_name">Crime_Intent</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="show_subtitle">show subtitle</string>
+    <string name="hide_subtitle">hide subtitle</string>
+    <string name="toast_sign_up">Enter Username and Password</string>
+    <string name="toast_login">The Username or Password entered are incorrect</string>
 </resources>

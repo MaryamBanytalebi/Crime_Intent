@@ -20,7 +20,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/checkbox_selected"
-        android:layout_toLeftOf="@+id/item_pic"
         tools:text="salallalla" />
 
     <TextView
@@ -38,8 +37,7 @@
         android:id="@+id/item_pic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        />
+        android:layout_alignParentRight="true" />
 
 
 </RelativeLayout>

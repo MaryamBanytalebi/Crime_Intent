@@ -41,6 +41,7 @@ public class Detail_view_pagerFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
     public Detail_view_pagerFragment() {
         // Required empty public constructor
     }
