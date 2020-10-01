@@ -28,7 +28,7 @@ public class UserDBRepository {
             return sInstance;
     }
 
-    public UserDBRepository(Context context) {
+    private UserDBRepository(Context context) {
         mContext = context.getApplicationContext();
         UserDBHelper userDBHelper = new UserDBHelper(mContext);
         mDatabase = userDBHelper.getWritableDatabase();

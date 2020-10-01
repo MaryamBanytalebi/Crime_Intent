@@ -7,10 +7,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class CrimeRepository implements IRepository<Crime> {
+public class CrimeRepository implements IRepository {
+
     private List<Crime> mCrimes;
     private static CrimeRepository sInstance;
-    private Crime crime;
 
     private CrimeRepository() {
 
@@ -18,9 +18,9 @@ public class CrimeRepository implements IRepository<Crime> {
         mCrimes.add(new Crime("crime1", "description for crim1", new Date()));
         mCrimes.add(new Crime("crime2", "description for crim2", new Date()));
         mCrimes.add(new Crime("crime3", "description for crim3", new Date()));
-        mCrimes.add(new Crime("crime4", "description for crim4", new Date()));
+        /*mCrimes.add(new Crime("crime4", "description for crim4", new Date()));
         mCrimes.add(new Crime("crime5", "description for crim5", new Date()));
-        mCrimes.add(new Crime("crime6", "description for crim6", new Date()));
+        mCrimes.add(new Crime("crime6", "description for crim6", new Date()));*/
         /*mCrimes.add(new Crime("crime7", "description for crim7", new Date()));
         mCrimes.add(new Crime("crime8", "description for crim8", new Date()));
         mCrimes.add(new Crime("crime9", "description for crim9", new Date()));
@@ -39,14 +39,6 @@ public class CrimeRepository implements IRepository<Crime> {
         if (sInstance == null)
             sInstance = new CrimeRepository();
         return sInstance;
-    }
-
-    public List<Crime> getCrimes() {
-        return mCrimes;
-    }
-
-    public void setCrimes(List<Crime> crimes) {
-        mCrimes = crimes;
     }
 
     @Override
@@ -68,18 +60,21 @@ public class CrimeRepository implements IRepository<Crime> {
         mCrimes.add(crime);
     }
 
+    @Override
+    public void delete(Crime crime) {
+        for (int i = 0; i < mCrimes.size(); i++) {
+            if (mCrimes.get(i).getUUID().equals(crime.getUUID())) {
+                mCrimes.remove(i);
+                return;
+            }
+        }
+    }
 
     @Override
     public void insertList(List list) {
         mCrimes.addAll(list);
     }
 
-
-
-    @Override
-    public void delete(UUID id) {
-        mCrimes.remove(get(id));
-    }
 
     @Override
     public void update(Crime crime) {
@@ -98,5 +93,4 @@ public class CrimeRepository implements IRepository<Crime> {
         }
         return -1;
     }
-
 }

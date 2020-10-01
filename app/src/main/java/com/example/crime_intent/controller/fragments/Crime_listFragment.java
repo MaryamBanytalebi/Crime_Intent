@@ -25,7 +25,8 @@ import android.widget.TextView;
 import com.example.crime_intent.R;
 import com.example.crime_intent.controller.activity.Detail_view_pagerActivity;
 import com.example.crime_intent.model.Crime;
-import com.example.crime_intent.repository.CrimeRepository;
+import com.example.crime_intent.repository.CrimeDBRepository;
+import com.example.crime_intent.repository.IRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +42,9 @@ public class Crime_listFragment extends Fragment {
     public static final String BUNDLE_ARG_SUB_TITLE_VISIBLE = "sub title visible";
     private Button mButton_add;
     private RecyclerView mRecyclerView;
-    private CrimeRepository mCrimeRepository;
+    private IRepository mRepository;
     private List<UUID> deleteitems;
+    private List<Crime> mCrimes;
     private CrimeAdapter mAdapter;
     private FrameLayout mFrameLayout;
     private boolean IsSubTitleVisible = false;
@@ -63,7 +65,7 @@ public class Crime_listFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mCrimeRepository=CrimeRepository.getInstance();
+        mRepository= CrimeDBRepository.getInstance(getActivity());
         deleteitems=new ArrayList<>();
         setHasOptionsMenu(true);
 
@@ -108,11 +110,15 @@ public class Crime_listFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.delete_menuItem:
-                for (int i = 0; i <deleteitems.size() ; i++) {
-                    CrimeRepository.getInstance().delete(deleteitems.get(i));
+                for (int i = 0; i <mCrimes.size() ; i++) {
+                    if (mCrimes.get(i).isCheckSelect()) {
+                        mRepository.delete(mCrimes.get(i));
+                        i-=1;
+                    }
                 }
+                updateView();
                 return true;
-                //updateView();
+
             case R.id.menu_item_subtitle:
                 IsSubTitleVisible =! IsSubTitleVisible;
                 updateSubTitle();
@@ -121,7 +127,7 @@ public class Crime_listFragment extends Fragment {
 
             case R.id.menu_item_add_crime:
                 Crime crime = new Crime();
-                CrimeRepository.getInstance().insert(crime);
+                mRepository.insert(crime);
                 Intent intent = Detail_view_pagerActivity.newIntent(getActivity(),crime.getUUID());
                 startActivity(intent);
                 return true;
@@ -131,7 +137,7 @@ public class Crime_listFragment extends Fragment {
     }
 
     private void updateSubTitle() {
-        int numberOfCrimes = CrimeRepository.getInstance().getCrimes().size();
+        int numberOfCrimes = mRepository.getList().size();
         String crimeText = IsSubTitleVisible ? numberOfCrimes + "crimes" : null ;
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.getSupportActionBar().setSubtitle(crimeText);
@@ -157,7 +163,7 @@ public class Crime_listFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Crime crime=new Crime();
-                CrimeRepository.getInstance().insert(crime);
+                mRepository.insert(crime);
                 Intent intent= Detail_view_pagerActivity.newIntent(getActivity(),crime.getUUID());
                 startActivity(intent);
 
@@ -246,14 +252,14 @@ public class Crime_listFragment extends Fragment {
     }
     private void updateView(){
 
-        if (CrimeRepository.getInstance().getList().size()==0){
+        if (mRepository.getList().size()==0){
             mFrameLayout.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.GONE);
         }
         else {
             mFrameLayout.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
-            List<Crime> crimes = CrimeRepository.getInstance().getList();
+            List<Crime> crimes = mRepository.getList();
 
             if ( mAdapter== null) {
                 mAdapter = new CrimeAdapter(crimes);

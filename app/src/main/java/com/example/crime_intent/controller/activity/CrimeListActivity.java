@@ -1,22 +1,11 @@
 package com.example.crime_intent.controller.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
-import com.example.crime_intent.R;
 import com.example.crime_intent.controller.fragments.Crime_listFragment;
-import com.example.crime_intent.controller.fragments.Detail_view_pagerFragment;
-import com.example.crime_intent.model.Crime;
-import com.example.crime_intent.repository.CrimeRepository;
 
 public class CrimeListActivity extends SingleFragmentActivity {
 

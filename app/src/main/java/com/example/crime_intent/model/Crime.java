@@ -9,6 +9,7 @@ public class Crime {
     private String mTitle;
     private String mDescription;
     private boolean solved;
+    private boolean mCheckSelect;
 
     public Crime(String title, String description,Date date) {
         mTitle = title;
@@ -19,8 +20,22 @@ public class Crime {
     }
 
     public Crime() {
-        mUUID=UUID.randomUUID();
-        mDate=new Date();
+        this(UUID.randomUUID());
+        //mDate=new Date();
+    }
+
+    public Crime(UUID UUID) {
+        mUUID = UUID;
+        mDate = new Date();
+        mCheckSelect = false;
+    }
+
+    public Crime( UUID UUID,  String title, Date date, boolean solved) {
+        mDate = date;
+        mUUID = UUID;
+        mTitle = title;
+        this.solved = solved;
+        mCheckSelect = false;
     }
 
     public Date getDate() {
@@ -57,5 +72,13 @@ public class Crime {
 
     public void setSolved(boolean solved) {
         this.solved = solved;
+    }
+
+    public boolean isCheckSelect() {
+        return mCheckSelect;
+    }
+
+    public void setCheckSelect(boolean checkSelect) {
+        mCheckSelect = checkSelect;
     }
 }

@@ -5,19 +5,28 @@ import com.example.crime_intent.model.Crime;
 import java.util.List;
 import java.util.UUID;
 
-public interface IRepository<Crime> {
+public interface IRepository {
+
     List<Crime> getList();
     Crime get(UUID id);
-    void insert(Crime e);
-
-    void insert(com.example.crime_intent.model.Crime crime);
-
+    void insert(Crime crime);
     void insertList(List<Crime> eList);
-    void delete(UUID id);
-    void update(Crime e);
-
-    void update(com.example.crime_intent.model.Crime crime);
-
+    void delete(Crime crime);
+    void update(Crime crime);
     int getPosition(UUID id);
+
+    /*List<Crime> getCrimes();
+    Crime getCrime(UUID crimeId);
+    void insertCrime(Crime crime);
+    void updateCrime(Crime crime);
+    void deleteCrime(Crime crime);
+    int getPosition(UUID crimeId);
+    UUID nextPosition(UUID crimeId);
+    UUID pervPosition(UUID crimeId);
+    int getIndexOfCrime (Crime crime);
+    Crime getCrimeWithIndex (int index);
+    int repositorySize();
+    public void setCrimesSelected();
+    public void setCrimesUnSelected();*/
 
 }

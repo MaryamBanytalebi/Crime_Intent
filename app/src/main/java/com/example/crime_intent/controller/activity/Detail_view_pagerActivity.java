@@ -14,7 +14,8 @@ import android.os.Bundle;
 import com.example.crime_intent.R;
 import com.example.crime_intent.controller.fragments.Detail_view_pagerFragment;
 import com.example.crime_intent.model.Crime;
-import com.example.crime_intent.repository.CrimeRepository;
+import com.example.crime_intent.repository.CrimeDBRepository;
+import com.example.crime_intent.repository.IRepository;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,7 +25,7 @@ public class Detail_view_pagerActivity extends AppCompatActivity {
     public static final String EXTRA_CRIMEID="com.example.crimeintent.crimeId";
     private ViewPager2 mViewPager2;
     private UUID mCrimeId;
-    private CrimeRepository mCrimeRepository;
+    private IRepository mCrimeRepository;
     public static Intent newIntent(Context context, UUID id){
         Intent intent=new Intent(context,Detail_view_pagerActivity.class);
         intent.putExtra(EXTRA_CRIMEID,id);
@@ -35,7 +36,7 @@ public class Detail_view_pagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_view_pager);
         mCrimeId = (UUID) getIntent().getSerializableExtra(EXTRA_CRIMEID);
-        mCrimeRepository=CrimeRepository.getInstance();
+        mCrimeRepository= CrimeDBRepository.getInstance(this);
         findViews();
         initView();
     }

@@ -20,7 +20,9 @@ import android.widget.EditText;
 
 import com.example.crime_intent.R;
 import com.example.crime_intent.model.Crime;
+import com.example.crime_intent.repository.CrimeDBRepository;
 import com.example.crime_intent.repository.CrimeRepository;
+import com.example.crime_intent.repository.IRepository;
 
 import java.util.UUID;
 
@@ -31,7 +33,7 @@ public class Detail_view_pagerFragment extends Fragment {
     private Button mButton_date;
     private CheckBox mCheckBox;
     private Crime mCrime;
-    private CrimeRepository mCrimeRepository;
+    private IRepository mCrimeRepository;
     public static final String ARGS_CRIME_ID="com.example.crimeintent.crimeId";
     public static Detail_view_pagerFragment newInstance(UUID id) {
 
@@ -55,8 +57,8 @@ public class Detail_view_pagerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mCrimeRepository=CrimeRepository.getInstance();
-        mCrime=mCrimeRepository.get((UUID) getArguments().getSerializable(ARGS_CRIME_ID));
+        mCrimeRepository= CrimeDBRepository.getInstance(getActivity());
+        mCrime= (Crime) mCrimeRepository.get((UUID) getArguments().getSerializable(ARGS_CRIME_ID));
         setHasOptionsMenu(true);
 
     }
@@ -71,7 +73,7 @@ public class Detail_view_pagerFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.delete_menuItem:
-                CrimeRepository.getInstance().delete(mCrime.getUUID());
+                CrimeRepository.getInstance().delete(mCrime);
                 getActivity().finish();
                 return true;
         }
