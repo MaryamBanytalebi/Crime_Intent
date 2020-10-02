@@ -10,6 +10,8 @@ public class Crime {
     private String mDescription;
     private boolean solved;
     private boolean mCheckSelect;
+    private String mSuspect;
+    private String mSuspectPhoneNumber;
 
     public Crime(String title, String description,Date date) {
         mTitle = title;
@@ -30,12 +32,14 @@ public class Crime {
         mCheckSelect = false;
     }
 
-    public Crime( UUID UUID,  String title, Date date, boolean solved) {
+    public Crime( UUID UUID,  String title, Date date, boolean solved,String suspect, String suspectPhoneNumber) {
         mDate = date;
         mUUID = UUID;
         mTitle = title;
         this.solved = solved;
         mCheckSelect = false;
+        mSuspect = suspect;
+        mSuspectPhoneNumber = suspectPhoneNumber;
     }
 
     public Date getDate() {
@@ -80,5 +84,21 @@ public class Crime {
 
     public void setCheckSelect(boolean checkSelect) {
         mCheckSelect = checkSelect;
+    }
+
+    public String getSuspectPhoneNumber() {
+        return mSuspectPhoneNumber;
+    }
+
+    public void setSuspectPhoneNumber(String suspectPhoneNumber) {
+        mSuspectPhoneNumber = suspectPhoneNumber;
+    }
+
+    public String getSuspect() {
+        return mSuspect;
+    }
+
+    public void setSuspect(String suspect) {
+        mSuspect = suspect;
     }
 }

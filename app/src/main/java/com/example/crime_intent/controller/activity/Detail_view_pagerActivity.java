@@ -12,7 +12,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.crime_intent.R;
-import com.example.crime_intent.controller.fragments.Detail_view_pagerFragment;
+import com.example.crime_intent.controller.fragments.Crime_DetailFragment;
 import com.example.crime_intent.model.Crime;
 import com.example.crime_intent.repository.CrimeDBRepository;
 import com.example.crime_intent.repository.IRepository;
@@ -69,7 +69,7 @@ public class Detail_view_pagerActivity extends AppCompatActivity {
         @Override
         public Fragment createFragment(int position) {
 
-            return  Detail_view_pagerFragment.newInstance(mCrimes.get(position).getUUID());
+            return  Crime_DetailFragment.newInstance(mCrimes.get(position).getUUID());
         }
 
         @Override
