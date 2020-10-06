@@ -1,14 +1,33 @@
 package com.example.crime_intent.model;
 
-import java.util.UUID;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+import java.util.UUID;
+@Entity(tableName = "userTable")
 public class User {
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    private long primaryId;
+
+    @ColumnInfo(name = "userName")
     private String mUsername;
+
+    @ColumnInfo(name = "password")
     private String mPassword;
 
     public User(String password, String username) {
         mUsername = username;
         mPassword = password;
+    }
+
+    public long getPrimaryId() {
+        return primaryId;
+    }
+
+    public void setPrimaryId(long primaryId) {
+        this.primaryId = primaryId;
     }
 
     public String getUsername() {
@@ -26,5 +45,4 @@ public class User {
     public void setPassword(String password) {
         mPassword = password;
     }
-
 }

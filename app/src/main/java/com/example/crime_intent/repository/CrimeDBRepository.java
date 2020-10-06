@@ -5,10 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.crime_intent.datebase.UserDBHelper;
+import androidx.room.Room;
+
+import com.example.crime_intent.datebase.CrimeDAO;
+import com.example.crime_intent.datebase.CrimeDataBaseRoom;
 import com.example.crime_intent.datebase.UserDBSchema;
 import com.example.crime_intent.model.Crime;
-import static com.example.crime_intent.datebase.UserDBSchema.CrimeTable.Cols;
+import com.example.crime_intent.datebase.UserDBSchema.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,6 +23,7 @@ public class CrimeDBRepository implements IRepository {
     private static CrimeDBRepository sInstance;
     private SQLiteDatabase mDatabase;
     private Context mContext;
+    private CrimeDAO mCrimeDAO;
 
     public static CrimeDBRepository getInstance(Context context) {
         if (sInstance == null)
@@ -29,13 +33,19 @@ public class CrimeDBRepository implements IRepository {
     }
 
     public CrimeDBRepository(Context context) {
-        UserDBHelper userDBHelper = new UserDBHelper(mContext);
-        mDatabase = userDBHelper.getWritableDatabase();
+        mContext = context.getApplicationContext();
+       /* UserDBHelper userDBHelper = new UserDBHelper(mContext);
+        mDatabase = userDBHelper.getWritableDatabase();*/
+        CrimeDataBaseRoom crimeDataBaseRoom = Room.databaseBuilder(mContext,CrimeDataBaseRoom.class
+                ,"crime.db")
+                .allowMainThreadQueries()
+                .build();
+        mCrimeDAO = crimeDataBaseRoom.getCrimeDatabaseDao();
     }
 
     @Override
     public List<Crime> getList(){
-        List<Crime> crimes = new ArrayList<>();
+        /*List<Crime> crimes = new ArrayList<>();
         Cursor cursor = mDatabase.query(UserDBSchema.CrimeTable.NAME,
                 null,
                 null,
@@ -57,13 +67,14 @@ public class CrimeDBRepository implements IRepository {
             cursor.close();
         }
 
-        return null;
+        return null;*/
+        return mCrimeDAO.getList();
     }
 
 
     @Override
     public Crime get(UUID id) {
-        String where = Cols.UUID + "=?";
+       /* String where = Cols.UUID + "=?";
         String[] whereArgs = new String[]{id.toString()};
          Cursor cursor = mDatabase.query(UserDBSchema.CrimeTable.NAME,
                  null,
@@ -82,53 +93,36 @@ public class CrimeDBRepository implements IRepository {
 
          } finally {
              cursor.close();
-         }
+         }*/
+       return mCrimeDAO.get(id);
     }
 
     @Override
     public void insert(Crime crime) {
-        ContentValues values = getContentValue(crime);
+        /*ContentValues values = getContentValue(crime);
         mDatabase.insert(UserDBSchema.CrimeTable.NAME,null,null);
-
-    }
-
-    private ContentValues getContentValue(Crime crime) {
-        ContentValues values = new ContentValues();
-        values.put(Cols.UUID , crime.getUUID().toString());
-        values.put(Cols.TITLE , crime.getTitle());
-        values.put(Cols.DATE , crime.getDate().getTime());
-        values.put(Cols.SOLVED, crime.isSolved() ? 1 : 0);
-        return values;
-    }
-
-    private Crime extractCrimeToCursor(Cursor cursor) {
-        UUID uuid = UUID.fromString(cursor.getString(cursor.getColumnIndex(Cols.UUID)));
-        String title = cursor.getString(cursor.getColumnIndex(Cols.TITLE));
-        Date date = new Date(cursor.getLong(cursor.getColumnIndex(Cols.DATE)));
-        boolean solved = cursor.getInt(cursor.getColumnIndex(Cols.SOLVED)) == 0 ? false : true;
-
-        return new Crime(uuid,title,date,solved);
-    }
-
-    @Override
-    public void insertList(List<Crime> eList) {
+      */
+        mCrimeDAO.insert(crime);
 
     }
 
     @Override
     public void delete(Crime crime) {
-        String whereClause = Cols.UUID +" =? ";
+       /* String whereClause = Cols.UUID +" =? ";
         String[] whereArgs = new String[]{crime.getUUID().toString()};
-        mDatabase.delete(UserDBSchema.CrimeTable.NAME,whereClause,whereArgs);
+        mDatabase.delete(UserDBSchema.CrimeTable.NAME,whereClause,whereArgs);*/
+        mCrimeDAO.delete(crime);
 
     }
 
     @Override
     public void update(Crime crime) {
-        ContentValues values = new ContentValues();
+        /*ContentValues values = new ContentValues();
         String whereClause = Cols.UUID + " = ?" ;
         String[] whereArgs = new String[]{crime.getUUID().toString()};
-        mDatabase.update(UserDBSchema.CrimeTable.NAME,values,whereClause,whereArgs);
+        mDatabase.update(UserDBSchema.CrimeTable.NAME,values,whereClause,whereArgs);*/
+        mCrimeDAO.delete(crime);
+
 
     }
 
@@ -141,4 +135,30 @@ public class CrimeDBRepository implements IRepository {
         }
         return -1;
     }
+
+    private ContentValues getContentValue(Crime crime) {
+        ContentValues values = new ContentValues();
+        values.put(CrimeTable.Cols.UUID , crime.getUUID().toString());
+        values.put(CrimeTable.Cols.TITLE , crime.getTitle());
+        values.put(CrimeTable.Cols.DATE , crime.getDate().getTime());
+        values.put(CrimeTable.Cols.SOLVED, crime.isSolved() ? 1 : 0);
+        return values;
+    }
+
+    private Crime extractCrimeToCursor(Cursor cursor) {
+        UUID uuid = UUID.fromString(cursor.getString(cursor.getColumnIndex(CrimeTable.Cols.UUID)));
+        String title = cursor.getString(cursor.getColumnIndex(CrimeTable.Cols.TITLE));
+        Date date = new Date(cursor.getLong(cursor.getColumnIndex(CrimeTable.Cols.DATE)));
+        boolean solved = cursor.getInt(cursor.getColumnIndex(CrimeTable.Cols.SOLVED)) == 0 ? false : true;
+        String suspect = cursor.getString(cursor.getColumnIndex(CrimeTable.Cols.SUSPECT));
+        String suspectPhone = cursor.getString(cursor.getColumnIndex(CrimeTable.Cols.SUSPECT_PHONE));
+
+        return new Crime(uuid,title,date,solved,suspect,suspectPhone);
+    }
+
+    @Override
+    public void insertList(List<Crime> eList) {
+
+    }
+
 }

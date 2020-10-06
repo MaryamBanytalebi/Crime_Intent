@@ -96,7 +96,7 @@ public class Crime_DetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view= inflater.inflate(R.layout.fragment_detail_view_pager, container, false);
+        View view= inflater.inflate(R.layout.fragment_crime_detail, container, false);
         findViews(view);
         setListeners();
         initView();

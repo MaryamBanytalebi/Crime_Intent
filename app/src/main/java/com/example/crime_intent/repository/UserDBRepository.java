@@ -5,19 +5,20 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.example.crime_intent.datebase.CrimeDAO;
+import com.example.crime_intent.datebase.CrimeDataBaseRoom;
 import com.example.crime_intent.datebase.UserDBHelper;
 import com.example.crime_intent.datebase.UserDBSchema;
 import com.example.crime_intent.model.User;
 import static  com.example.crime_intent.datebase.UserDBSchema.UserTable.Cols;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 public class UserDBRepository {
     private static UserDBRepository sInstance;
     private Context mContext;
+    private CrimeDAO mUserDAO;
     private SQLiteDatabase mDatabase;
 
 
@@ -36,7 +37,8 @@ public class UserDBRepository {
     }
 
     public List<User> getUsers() {
-        List<User> users = new ArrayList<>();
+        return mUserDAO.getUsers();
+        /*List<User> users = new ArrayList<>();
 
         Cursor cursor = mDatabase.query(
                 UserDBSchema.UserTable.NAME,
@@ -63,11 +65,13 @@ public class UserDBRepository {
             cursor.close();
         }
 
-        return users;
+        return users;*/
     }
 
     public User getUser(String username){
-        String where = Cols.USERNAME + " = ?";
+        return mUserDAO.getUser(username);
+
+        /*String where = Cols.USERNAME + " = ?";
         String[] whereArgs = new String[]{username};
 
         Cursor cursor = mDatabase.query(
@@ -90,12 +94,13 @@ public class UserDBRepository {
         } finally {
             cursor.close();
         }
-
+*/
     }
 
     public void insertUser(User user) {
-        ContentValues values = getContentValues(user);
-        mDatabase.insert(UserDBSchema.UserTable.NAME, null, values);
+       /* ContentValues values = getContentValues(user);
+        mDatabase.insert(UserDBSchema.UserTable.NAME, null, values);*/
+       mUserDAO.insertUser(user);
     }
 
     private ContentValues getContentValues(User user) {
