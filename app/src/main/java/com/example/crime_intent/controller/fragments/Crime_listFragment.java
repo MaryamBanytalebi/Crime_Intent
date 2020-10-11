@@ -1,5 +1,6 @@
 package com.example.crime_intent.controller.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -23,20 +24,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.crime_intent.R;
+import com.example.crime_intent.controller.SwipeRecyclerView;
 import com.example.crime_intent.controller.activity.Detail_view_pagerActivity;
 import com.example.crime_intent.model.Crime;
 import com.example.crime_intent.repository.CrimeDBRepository;
 import com.example.crime_intent.repository.IRepository;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Crime_listFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class Crime_listFragment extends Fragment {
 
     public static final String BUNDLE_ARG_SUB_TITLE_VISIBLE = "sub title visible";
@@ -48,6 +46,9 @@ public class Crime_listFragment extends Fragment {
     private CrimeAdapter mAdapter;
     private FrameLayout mFrameLayout;
     private boolean IsSubTitleVisible = false;
+
+    private Callbacks mCallbacks;
+    private Crime mCrimeUndo;
 
     public Crime_listFragment() {
         // Required empty public constructor
@@ -84,6 +85,17 @@ public class Crime_listFragment extends Fragment {
         super.onResume();
         updateSubTitle();
         updateView();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof Callbacks)
+            mCallbacks = (Callbacks) context;
+        else {
+            throw new ClassCastException(context.toString()
+                    + " must implement Callbacks");
+        }
     }
 
     @Override
@@ -128,6 +140,7 @@ public class Crime_listFragment extends Fragment {
             case R.id.menu_item_add_crime:
                 Crime crime = new Crime();
                 mRepository.insert(crime);
+                mCallbacks.onCrimeSelected(crime);
                 Intent intent = Detail_view_pagerActivity.newIntent(getActivity(),crime.getUUID());
                 startActivity(intent);
                 return true;
@@ -164,6 +177,7 @@ public class Crime_listFragment extends Fragment {
             public void onClick(View view) {
                 Crime crime=new Crime();
                 mRepository.insert(crime);
+                mCallbacks.onCrimeSelected(crime);
                 Intent intent= Detail_view_pagerActivity.newIntent(getActivity(),crime.getUUID());
                 startActivity(intent);
 
@@ -173,8 +187,49 @@ public class Crime_listFragment extends Fragment {
     }
     private void initView(){
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        swipeRecycler();
         updateView();
     }
+
+    private void swipeRecycler() {
+        /*  set swipe touch listener */
+        SwipeRecyclerView swipeTouchListener = new
+                SwipeRecyclerView(mRecyclerView,
+                new SwipeRecyclerView.SwipeListener() {
+
+                    @Override
+                    public boolean canSwipeRight(int position) {
+                        //enable/disable right swipe on checkbox base else use true/false
+                        return true;
+                    }
+
+                    @Override
+                    public void onDismissedBySwipeRight(RecyclerView recyclerView, int[] reverseSortedPositions) {
+                        //on recycler view swipe right dismiss update adapter
+                        onRecyclerViewDismiss(reverseSortedPositions, mCrimes);
+                    }
+                });
+
+        //add item touch listener to recycler view
+        mRecyclerView.addOnItemTouchListener(swipeTouchListener);
+    }
+
+    private void onRecyclerViewDismiss(int[] reverseSortedPositions, List<Crime> crimes) {
+        for (int position : reverseSortedPositions) {
+            mCrimeUndo = crimes.get(position);
+            mRepository.delete(crimes.get(position));
+        }
+        updateView();
+        showSnackBar();
+    }
+
+    private void showSnackBar() {
+        Snackbar snackbar = Snackbar.make(mFrameLayout, R.string.crime_dismiss_success, Snackbar.LENGTH_SHORT);
+        snackbar.setAction(R.string.crime_dismiss_undo,new MyUndoListener());
+        snackbar.show();
+    }
+
+
     private class CrimeHolder extends RecyclerView.ViewHolder{
         TextView mTextView_title;
         TextView mTextView_desc;
@@ -191,8 +246,9 @@ public class Crime_listFragment extends Fragment {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent= Detail_view_pagerActivity.newIntent(getActivity(),mCrime.getUUID());
-                    startActivity(intent);
+                    /*Intent intent= Detail_view_pagerActivity.newIntent(getActivity(),mCrime.getUUID());
+                    startActivity(intent);*/
+                    mCallbacks.onCrimeSelected(mCrime);
                 }
             });
             mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -270,5 +326,18 @@ public class Crime_listFragment extends Fragment {
         }
 
 
+    }
+
+    public interface Callbacks {
+        void onCrimeSelected(Crime crime);
+    }
+
+    public class MyUndoListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            mRepository.insert(mCrimeUndo);
+            updateView();
+        }
     }
 }

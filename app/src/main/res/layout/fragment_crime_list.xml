@@ -7,14 +7,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <androidx.recyclerview.widget.RecyclerView
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:id="@+id/recycler_crime_list"
         android:layout_height="match_parent"/>
     <FrameLayout
         android:id="@+id/empty_framLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
         <TextView
             android:textSize="20sp"

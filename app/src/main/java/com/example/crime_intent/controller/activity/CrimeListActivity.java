@@ -5,9 +5,12 @@ import androidx.fragment.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 
+import com.example.crime_intent.controller.fragments.Crime_DetailFragment;
 import com.example.crime_intent.controller.fragments.Crime_listFragment;
+import com.example.crime_intent.model.Crime;
 
-public class CrimeListActivity extends SingleFragmentActivity {
+public class CrimeListActivity extends SingleFragmentActivity implements
+        Crime_DetailFragment.Callbacks {
 
     public static Intent newIntent(Context context,String username){
         Intent intent=new Intent(context,CrimeListActivity.class);
@@ -19,6 +22,11 @@ public class CrimeListActivity extends SingleFragmentActivity {
 
 
         return  Crime_listFragment.newInstance();
+    }
+
+    @Override
+    public void onCrimeUpdated(Crime crime) {
+
     }
 
    /* @Override

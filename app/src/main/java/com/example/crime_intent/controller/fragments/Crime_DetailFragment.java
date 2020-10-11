@@ -1,6 +1,7 @@
 package com.example.crime_intent.controller.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -44,6 +45,7 @@ public class Crime_DetailFragment extends Fragment {
     private CheckBox mCheckBox;
     private Crime mCrime;
     private IRepository mCrimeRepository;
+    private Callbacks mCallbacks;
     public static final String ARGS_CRIME_ID="com.example.crimeintent.crimeId";
     private static final int REQUEST_SELECT_PHONE_NUMBER = 2;
 
@@ -64,6 +66,18 @@ public class Crime_DetailFragment extends Fragment {
     public void onPause() {
         super.onPause();
         updateCrime();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        if (context instanceof Callbacks)
+            mCallbacks = (Callbacks) context;
+        else {
+            throw new ClassCastException(context.toString()
+                    + " must implement Callbacks");
+        }
     }
 
     @Override
@@ -244,6 +258,7 @@ public class Crime_DetailFragment extends Fragment {
     }
     private void updateCrime(){
         CrimeRepository.getInstance().update(mCrime);
+        mCallbacks.onCrimeUpdated(mCrime);
     }
 
     private void callPhoneNumber() {
@@ -256,5 +271,9 @@ public class Crime_DetailFragment extends Fragment {
         Intent dialIntent = new Intent(Intent.ACTION_DIAL);
         dialIntent.setData(Uri.parse("tel:" + mCrime.getSuspectPhoneNumber()));
         startActivity(dialIntent);
+    }
+
+    public interface Callbacks {
+        void onCrimeUpdated(Crime crime);
     }
 }
